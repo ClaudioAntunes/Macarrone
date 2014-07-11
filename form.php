@@ -1,8 +1,38 @@
-<!DOCTYPE html>
-<!--
-Arquivo criado para o  projeto do School of Net.
--->
+<?php
+$subjectPrefix = '[Contato via Site]';
+$emailTo = '<pesquisaforte@gmail.com>';
 
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name    = stripslashes(trim($_POST['form-name']));
+    $email   = stripslashes(trim($_POST['form-email']));
+    $subject = stripslashes(trim($_POST['form-subject']));
+    $message = stripslashes(trim($_POST['form-message']));
+    $pattern  = '/[\r\n]|Content-Type:|Bcc:|Cc:/i';
+
+    if (preg_match($pattern, $name) || preg_match($pattern, $email) || preg_match($pattern, $subject)) {
+        die("Detectado injeção no Header");
+    }
+
+    $emailIsValid = preg_match('/^[^0-9][A-z0-9._%+-]+([.][A-z0-9_]+)*[@][A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}$/', $email);
+
+    if($name && $email && $emailIsValid && $subject && $message){
+        $subject = "$subjectPrefix $subject";
+        $body = "Nome: $name <br /> Email: $email <br /> Mensagem: $message";
+
+        $headers  = 'MIME-Version: 1.1' . PHP_EOL;
+        $headers .= 'Content-type: text/html; charset=utf-8' . PHP_EOL;
+        $headers .= "From: $name <$email>" . PHP_EOL;
+        $headers .= "Return-Path: $emailTo" . PHP_EOL;
+        $headers .= "Reply-To: $email" . PHP_EOL;
+        $headers .= "X-Mailer: PHP/". phpversion() . PHP_EOL;
+
+        mail($emailTo, $subject, $body, $headers);
+        $emailSent = true;
+    } else {
+        $hasError = true;
+    }
+}
+?><!DOCTYPE html>
 <html>
 <head>
     <?php    require_once 'head.php'; ?>
@@ -15,6 +45,19 @@ Arquivo criado para o  projeto do School of Net.
         <?php require_once 'menu.php'; ?>
     </div>
     
+    <?php if(isset($emailSent) && $emailSent): ?>
+        <div class="col-md-6 col-md-offset-3">
+            <div class="alert alert-success text-center">Sua mensagem foi enviada com sucesso.</div>
+        </div>
+    
+    <?php else: ?>
+        
+        <?php if(isset($hasError) && $hasError): ?>
+        <div class="col-md-5 col-md-offset-4">
+            <div class="alert alert-danger text-center">Houve um erro no envio, tente novamente mais tarde.</div>
+        </div>
+        <?php endif; ?>
+
     <div class="col-md-6 col-md-offset-3">
         <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" id="contact-form" class="form-horizontal" role="form" method="post">
             <div class="form-group">
@@ -54,11 +97,10 @@ Arquivo criado para o  projeto do School of Net.
         </bottom>    
         
     </div>
-    
+    <?php endif; ?>
 
     <script type="text/javascript" src="assets/js/contact-form.js"></script>
 </body>
 
 </html>
-
 
