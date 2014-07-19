@@ -48,6 +48,40 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php if(isset($emailSent) && $emailSent): ?>
         <div class="col-md-6 col-md-offset-3">
             <div class="alert alert-success text-center">Sua mensagem foi enviada com sucesso.</div>
+            
+            <?php echo 'Segue os dados enviados:','<br>'; ?>
+            <br>
+            <div class="form-group">
+                <label for="name" class="col-lg-2 control-label">Nome</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control required" id="form-name" name="form-name" placeholder="<?php echo $name; ?>" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-lg-2 control-label">Email</label>
+                <div class="col-lg-10">
+                    <input type="email" class="form-control required" id="form-email" name="form-email" placeholder="<?php echo $email; ?>" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="assunto" class="col-lg-2 control-label">Assunto</label>
+                <div class="col-lg-10">
+                    <input type="text" class="form-control required" id="form-subject" name="form-subject" placeholder="<?php echo $subject; ?>" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="mensagem" class="col-lg-2 control-label">Mensagem</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control required" rows="3" id="form-message" name="form-message" placeholder="<?php echo $message; ?>" /></textarea>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <button type="" class="btn btn-default"><a href="">Home</a></button>
+                </div>
+            </div>
+           
         </div>
     
     <?php else: ?>
